@@ -23,19 +23,19 @@ import java.util.Arrays;
 @EnableTransactionManagement
 @EnableJms
 @EnableJpaRepositories({"com.algo.vn30.persistence"})
-public class Vn30Application implements CommandLineRunner  {
+public class Vn30Application implements CommandLineRunner {
+
+    @Autowired
+    private BaseWorker worker;
 
     public static void main(String[] args) {
         SpringApplication.run(Vn30Application.class, args);
     }
 
-    @Autowired
-    BaseWorker worker;
-
     @Override
     public void run(String... args) throws Exception {
         try {
-            worker.start("pl");
+            worker.start("VN30");
         } catch (Exception e) {
             try {
             } catch (Exception ignored) {
