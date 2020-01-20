@@ -5,14 +5,15 @@ import javax.persistence.*;
 import java.util.Date;
 
 @MappedSuperclass
-public class SecurityModel{
+public class SecurityModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
     @Column(name = "name")
-    private Long name;
+    private String name;
+
     @Column(name = "full_name")
     private String full_name;
 
@@ -31,6 +32,9 @@ public class SecurityModel{
     @Column(name = "last_updated")
     private Date last_updated;
 
+    @Column(name = "exchange")
+    private String exchange;
+
     public Long getId() {
         return id;
     }
@@ -39,11 +43,11 @@ public class SecurityModel{
         this.id = id;
     }
 
-    public Long getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(Long name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -93,5 +97,13 @@ public class SecurityModel{
 
     public void setLast_updated(Date last_updated) {
         this.last_updated = last_updated;
+    }
+
+    public String getExchange() {
+        return exchange;
+    }
+
+    public void setExchange(String exchange) {
+        this.exchange = exchange;
     }
 }

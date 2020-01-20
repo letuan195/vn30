@@ -29,15 +29,15 @@ public class Vn30FilterServiceImpl implements Vn30FilterService {
      * @return securities Danh sách cổ phiếu sau khi lọc
      */
     private List<SecurityImpl> filter1(List<SecurityImpl> securities) {
-        return null;
+        return securities;
     }
 
     private List<SecurityImpl> filter2(List<SecurityImpl> securities) {
-        return null;
+        return securities;
     }
 
     private List<SecurityImpl> filter3(List<SecurityImpl> securities) {
-        return null;
+        return securities;
     }
 
     private void logSecurities(List<SecurityImpl> securities) {
@@ -47,10 +47,11 @@ public class Vn30FilterServiceImpl implements Vn30FilterService {
 
     @Override
     public void filter(Date date) {
-        // TODO: Thêm cột exchange_id vào bảng security để phân biệt sàn chứng khoán niêm yét mã cổ phiếu
-        // TODO: Lấy dữ liệu trong DailyData lưu ý lấy ngày date và N ngày trước đó (N vừa đủ, không lấy dư)
-        // TODO: Lấy ra các mã thuộc sàn HOSE
-        List<SecurityImpl> securities = null;
+        logger.info("VN30: Filter at " + date.toString());
+        // Lấy ra các mã thuộc HSX
+        List<SecurityImpl> securities = securityPersistence.findByExchange("HSX");
+        logger.info("VN30: List of HSX securities");
+        logSecurities(securities);
         // Từng bước filter
         securities = filter1(securities);
         logger.info("VN30: List of securites after 1st filter");
