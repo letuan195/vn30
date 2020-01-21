@@ -21,7 +21,6 @@ import java.util.Arrays;
 @SpringBootApplication
 @EntityScan("com.algo.vn30.*")
 @EnableTransactionManagement
-@EnableJms
 @EnableJpaRepositories({"com.algo.vn30.persistence"})
 public class Vn30Application implements CommandLineRunner  {
 

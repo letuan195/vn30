@@ -16,4 +16,7 @@ public interface SecurityPersistence extends CrudRepository<SecurityImpl, Long> 
 
     @Query("SELECT t FROM SecurityImpl t WHERE t.id = :id")
     List<SecurityImpl> findBySecId(@Param("id") Long id);
+
+    @Query("SELECT t FROM SecurityImpl t WHERE t.exchange = :exchange")
+    List<SecurityImpl> findByExchange(@Param("exchange") String exchange);
 }

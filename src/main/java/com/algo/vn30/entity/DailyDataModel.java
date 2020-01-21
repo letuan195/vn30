@@ -24,6 +24,9 @@ public class DailyDataModel {
     @Column(name = "shares")
     private Long shares;
 
+    @Column(name = "free_shares")
+    private Long free_shares;
+
     @Column(name = "close")
     private Double close;
 
@@ -69,6 +72,10 @@ public class DailyDataModel {
     public void setShares(Long shares) {
         this.shares = shares;
     }
+
+    public Long getFree_shares() { return free_shares; }
+
+    public void setFree_shares(Long free_shares) { this.free_shares = free_shares; }
 
     public Double getClose() {
         return close;
