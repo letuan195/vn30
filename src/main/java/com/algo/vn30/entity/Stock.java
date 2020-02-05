@@ -29,8 +29,17 @@ public class Stock {
         this.code = code;
         this.isPreVN30 = isPreVN30;
         this.hasWarning = false;
-
-        this.f = historicalDailyDataListCurrent.get(0).getFree_shares().doubleValue() / historicalDailyDataList.get(0).getShares().doubleValue();
+        if (code.compareTo("HNG") == 0)
+        {
+            this.hasWarning = true;
+        }
+        if (historicalDailyDataListCurrent.size() > 0) {
+            if (historicalDailyDataListCurrent.get(0).getFree_shares() != null && historicalDailyDataList.get(0).getShares() != null) {
+                this.f = historicalDailyDataListCurrent.get(0).getFree_shares().doubleValue() / historicalDailyDataList.get(0).getShares().doubleValue();
+            }
+            else { this.f = 0.0; }
+        }
+        else { this.f = 0.0; }
         this.gtvhCurrent = historicalDailyDataList.get(0).getMarket_cap().doubleValue();
 
         Date date = historicalDailyDataList.get(0).getDate();
@@ -87,7 +96,10 @@ public class Stock {
         this.code = code;
         this.isPreVN30 = isPreVN30;
         this.hasWarning = false;
-
+        if (code.compareTo("HNG") == 0)
+        {
+            this.hasWarning = true;
+        }
         this.f = f;
         this.gtvhCurrent = historicalDailyDataList.get(0).getMarket_cap().doubleValue();
 

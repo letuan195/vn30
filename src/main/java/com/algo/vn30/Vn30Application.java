@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.jms.annotation.EnableJms;
 
@@ -22,6 +24,7 @@ import java.util.Arrays;
 @EntityScan("com.algo.vn30.*")
 @EnableTransactionManagement
 @EnableJpaRepositories({"com.algo.vn30.persistence"})
+@EnableScheduling
 public class Vn30Application implements CommandLineRunner  {
 
     public static void main(String[] args) {

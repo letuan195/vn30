@@ -55,7 +55,7 @@ public class VN30 {
         }
     }
 
-    public static List<Stock> getTop5StockGTVH(List<Stock> lsStocks) {
+    public static List<Stock> getTop5StockGTVHCurrent(List<Stock> lsStocks) {
         List<Stock> lsTop5GTVH = new ArrayList<>();
         sortListStockByGTVHCurrent(lsStocks);
 
@@ -74,12 +74,14 @@ public class VN30 {
         for (int i = 0; i < lsStocks.size(); i++) { sumGTVH_f += lsStocks.get(i).getGTVH_f(); }
         for (int i = 0; i < lsStocks.size(); i++) {
             sumCumulativeGTVH_f += lsStocks.get(i).getGTVH_f();
+            System.out.println(lsStocks.get(i).getCode() + "," + lsStocks.get(i).getGTVH_f());
             index += 1;
+//            System.out.println(sumCumulativeGTVH_f / sumGTVH_f);
             if (sumCumulativeGTVH_f / sumGTVH_f >= 0.9) { break; }
         }
-
+//        System.out.println(index);
         if (index % 2 == 0) { median = (lsStocks.get(index / 2).getGTVH_f() + lsStocks.get(index / 2 - 1).getGTVH_f()) / 2; }
-        else { median = lsStocks.get((index -1) / 2).getGTVH_f(); }
+        else { median = lsStocks.get((index - 1) / 2).getGTVH_f(); }
 
         return median;
     }
@@ -98,6 +100,7 @@ public class VN30 {
         for (int i = 0; i < lsStocksVNAllShare.size(); i++) {
             sumCumulativeGTGD += lsStocksVNAllShare.get(i).getGTGD();
             lsStockCumulative.add(lsStocksVNAllShare.get(i));
+//            System.out.println(lsStocksVNAllShare.get(i).getCode());
             if (sumCumulativeGTGD / sumGTGD >= threshHold) {
                 if (lsStockCumulative.size() < 50) { threshHold += 0.01; }
                 else { break; }
@@ -110,11 +113,8 @@ public class VN30 {
 
     public static List<Stock> getVN30(List<Stock> lsStockHOSE) {
         List<Stock> lsVN30 = new ArrayList<>();
-        List<Stock> lsVN30preventive = new ArrayList<>();
-
-//        sortListStockByGTVH(lsStockHOSE);
+//        List<Stock> lsVN30preventive = new ArrayList<>();
 //        return lsStockHOSE;
-
         // II.1
         for (int i = 0; i < lsStockHOSE.size(); i++) {
             if (lsStockHOSE.get(i).getHasWarning()) {
@@ -122,32 +122,26 @@ public class VN30 {
                 i--;
             }
         }
-//
-        System.out.println("II.1");
         for (int i = 0; i < lsStockHOSE.size(); i++) {
-            if (lsStockHOSE.get(i).getCode() == "SAB" || lsStockHOSE.get(i).getCode() == "DPM" || lsStockHOSE.get(i).getCode() == "EIB") {
+            if (lsStockHOSE.get(i).getCode().compareTo("BVH") == 0) {
                 System.out.println(lsStockHOSE.get(i).getCode());
+                System.out.println(lsStockHOSE.get(i).getHasWarning());
+                System.out.println(lsStockHOSE.get(i).getGTVH_f());
             }
         }
-//
-//        //II.2
-        List<Stock> lsTop5GTVH = getTop5StockGTVH(lsStockHOSE);
+
+//        II.2
+        List<Stock> lsTop5GTVH = getTop5StockGTVHCurrent(lsStockHOSE);
         for (int i = 0; i < lsStockHOSE.size(); i++) {
             if (lsStockHOSE.get(i).getLenFromListedDate() < 6 && (lsStockHOSE.get(i).getLenFromListedDate() < 3 || !lsTop5GTVH.contains(lsStockHOSE.get(i)))) {
                 lsStockHOSE.remove(lsStockHOSE.get(i));
                 i--;
             }
         }
-//
-        System.out.println("II.2");
-        for (int i = 0; i < lsStockHOSE.size(); i++) {
-            if (lsStockHOSE.get(i).getCode().compareTo("PPC") == 0 || lsStockHOSE.get(i).getCode().compareTo("KDH") == 0 || lsStockHOSE.get(i).getCode().compareTo("SAB") == 0) {
-                System.out.println(lsStockHOSE.get(i).getCode());
-            }
-        }
-//
-        //II.3
+
+//        II.3
         Double median = calMedianGTVH_f(lsStockHOSE);
+
         for (int i = 0; i < lsStockHOSE.size(); i++) {
             if (lsStockHOSE.get(i).getF() < 0.1) {
                 if (lsStockHOSE.get(i).getGTVH_f() < median) {
@@ -156,18 +150,14 @@ public class VN30 {
                 }
             }
         }
-
-//        sortListStockByGTVH(lsStockHOSE);
-//        return lsStockHOSE;
-//
-        System.out.println("II.3");
         for (int i = 0; i < lsStockHOSE.size(); i++) {
-            if (lsStockHOSE.get(i).getCode().compareTo("PPC") == 0 || lsStockHOSE.get(i).getCode().compareTo("KDH") == 0 || lsStockHOSE.get(i).getCode().compareTo("SAB") == 0) {
+            if (lsStockHOSE.get(i).getCode().compareTo("BVH") == 0) {
                 System.out.println(lsStockHOSE.get(i).getCode());
+                System.out.println(lsStockHOSE.get(i).getHasWarning());
             }
         }
-//
-//        //II.4
+
+//      II.4
         for (int i = 0; i < lsStockHOSE.size(); i++) {
             if (lsStockHOSE.get(i).getTurnover() < 0.05) {
                 if (lsStockHOSE.get(i).getTurnover() < 0.04 || !lsStockHOSE.get(i).getIsPreVN30()) {
@@ -176,36 +166,41 @@ public class VN30 {
                 }
             }
         }
-//
-        System.out.println("II.4");
+
         for (int i = 0; i < lsStockHOSE.size(); i++) {
-            if (lsStockHOSE.get(i).getCode().compareTo("PPC") == 0 || lsStockHOSE.get(i).getCode().compareTo("KDH") == 0 || lsStockHOSE.get(i).getCode().compareTo("SAB") == 0) {
+            if (lsStockHOSE.get(i).getCode().compareTo("BVH") == 0) {
                 System.out.println(lsStockHOSE.get(i).getCode());
+                System.out.println(lsStockHOSE.get(i).getHasWarning());
             }
         }
-//
-//        II.5 bỏ qua
-//         Ưu tiên (bỏ qua đk cảnh báo)
+//        for (int i = 0; i < lsStockHOSE.size(); i++) {
+//            if (lsStockHOSE.get(i).getF() == 0 || lsStockHOSE.get(i).getCode().compareTo("HPX") == 0) {
+//                lsStockHOSE.remove(lsStockHOSE.get(i));
+//                i--;
+//            }
+//        }
+//        sortCode(lsStockHOSE);
+//        return lsStockHOSE;
+        // II.5 bỏ qua
+        // Ưu tiên (bỏ qua đk cảnh báo)
         List<Stock> lsA3 = getListStocksCumulativeGTGD(lsStockHOSE);
-//        List<Stock> lsA3_temp = new ArrayList<>();
-//        return lsA3;
         for (int i = 0; i < 20; i++) { lsVN30.add(lsA3.get(i)); }
         for (int i = 20; i < 40; i++) {
             if (lsA3.get(i).getIsPreVN30() && lsVN30.size() < 30) {
                 lsVN30.add(lsA3.get(i));
-//                lsA3_temp.add(lsA3.get(i));
             }
         }
-////
+
         for (int i = 0; i < lsA3.size(); i++) {
             if (!lsVN30.contains(lsA3.get(i)) && lsVN30.size() < 30) { lsVN30.add(lsA3.get(i)); }
         }
-//        sortCode(lsVN30);
+
         sortListStockByGTVH(lsVN30);
+//        sortCode(lsVN30);
         for (int i = 0; i < lsA3.size(); i++) {
-            if (!lsVN30.contains(lsA3.get(i)) && lsVN30.size() < 51) { lsVN30.add(lsA3.get(i)); }
+            if (!lsVN30.contains(lsA3.get(i)) && lsVN30.size() < 100) { lsVN30.add(lsA3.get(i)); }
         }
-////
+
         return lsVN30;
     }
 }
