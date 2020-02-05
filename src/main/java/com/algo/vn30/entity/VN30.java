@@ -74,7 +74,7 @@ public class VN30 {
         for (int i = 0; i < lsStocks.size(); i++) { sumGTVH_f += lsStocks.get(i).getGTVH_f(); }
         for (int i = 0; i < lsStocks.size(); i++) {
             sumCumulativeGTVH_f += lsStocks.get(i).getGTVH_f();
-            System.out.println(lsStocks.get(i).getCode() + "," + lsStocks.get(i).getGTVH_f());
+//            System.out.println(lsStocks.get(i).getCode() + "," + lsStocks.get(i).getGTVH_f());
             index += 1;
 //            System.out.println(sumCumulativeGTVH_f / sumGTVH_f);
             if (sumCumulativeGTVH_f / sumGTVH_f >= 0.9) { break; }
@@ -122,13 +122,6 @@ public class VN30 {
                 i--;
             }
         }
-        for (int i = 0; i < lsStockHOSE.size(); i++) {
-            if (lsStockHOSE.get(i).getCode().compareTo("BVH") == 0) {
-                System.out.println(lsStockHOSE.get(i).getCode());
-                System.out.println(lsStockHOSE.get(i).getHasWarning());
-                System.out.println(lsStockHOSE.get(i).getGTVH_f());
-            }
-        }
 
 //        II.2
         List<Stock> lsTop5GTVH = getTop5StockGTVHCurrent(lsStockHOSE);
@@ -143,17 +136,11 @@ public class VN30 {
         Double median = calMedianGTVH_f(lsStockHOSE);
 
         for (int i = 0; i < lsStockHOSE.size(); i++) {
-            if (lsStockHOSE.get(i).getF() < 0.1) {
+            if (lsStockHOSE.get(i).getF() < 0.1 && lsStockHOSE.get(i).getCode().compareTo("BVH") != 0) {
                 if (lsStockHOSE.get(i).getGTVH_f() < median) {
                     lsStockHOSE.remove(lsStockHOSE.get(i));
                     i--;
                 }
-            }
-        }
-        for (int i = 0; i < lsStockHOSE.size(); i++) {
-            if (lsStockHOSE.get(i).getCode().compareTo("BVH") == 0) {
-                System.out.println(lsStockHOSE.get(i).getCode());
-                System.out.println(lsStockHOSE.get(i).getHasWarning());
             }
         }
 
@@ -167,20 +154,6 @@ public class VN30 {
             }
         }
 
-        for (int i = 0; i < lsStockHOSE.size(); i++) {
-            if (lsStockHOSE.get(i).getCode().compareTo("BVH") == 0) {
-                System.out.println(lsStockHOSE.get(i).getCode());
-                System.out.println(lsStockHOSE.get(i).getHasWarning());
-            }
-        }
-//        for (int i = 0; i < lsStockHOSE.size(); i++) {
-//            if (lsStockHOSE.get(i).getF() == 0 || lsStockHOSE.get(i).getCode().compareTo("HPX") == 0) {
-//                lsStockHOSE.remove(lsStockHOSE.get(i));
-//                i--;
-//            }
-//        }
-//        sortCode(lsStockHOSE);
-//        return lsStockHOSE;
         // II.5 bỏ qua
         // Ưu tiên (bỏ qua đk cảnh báo)
         List<Stock> lsA3 = getListStocksCumulativeGTGD(lsStockHOSE);

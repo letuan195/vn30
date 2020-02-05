@@ -21,4 +21,7 @@ public interface FreeFloatRealDataPersistence extends CrudRepository<FreeFloatRe
     @Query("SELECT t FROM FreeFloatRealDataImpl t WHERE t.date = :date")
     List<FreeFloatRealDataImpl> findByDate(@Param("date") Date date);
 
+    @Query("SELECT distinct t.date FROM FreeFloatRealDataImpl t WHERE t.date <= :date order by t.date desc")
+    List<Date> findNewestByDate(@Param("date") Date date);
+
 }

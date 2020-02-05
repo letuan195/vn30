@@ -5,15 +5,12 @@ import com.algo.vn30.persistence.DailyDataPersistence;
 import com.algo.vn30.persistence.FreeFloatDataPersistence;
 import com.algo.vn30.persistence.FreeFloatRealDataPersistence;
 import com.algo.vn30.persistence.SecurityPersistence;
+import com.algo.vn30.service.ReportByDayService;
 import com.algo.vn30.worker.AbstractWorker;
-import com.google.gson.internal.$Gson$Preconditions;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.security.Security;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -35,14 +32,25 @@ public class Worker extends AbstractWorker {
     @Autowired
     private FreeFloatRealDataPersistence freeFloatRealDataPersistence;
 
+    @Autowired
+    ReportByDayService reportByDay;
+
     @Override
     public void onStarted() {
         // do something
-        System.out.println("run ok");
+        /*System.out.println("run ok");
         try { vn30_backup(); }
         catch (Exception i) {
 
+        }*/
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        try {
+            date = format.parse("2020-02-04");
+        } catch (Exception e) {
+
         }
+        reportByDay.getReport(date);
     }
 
     public void vn30() throws ParseException, IOException {
@@ -286,8 +294,8 @@ public class Worker extends AbstractWorker {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date dateStart = format.parse(year.toString() + "-" + month.toString() + "-" + day.toString());
         Date dateEnd = format.parse("2020-01-30");
-        Date dateThis = format.parse("2020-01-20");
-        Date dateThat = format.parse("2020-01-20");
+        Date dateThis = format.parse("2020-1-20");
+        Date dateThat = format.parse("2020-1-20");
         Date dateTemp = format.parse("2020-01-20");
 
         List<String> listPreVN30Code = new ArrayList<>();
