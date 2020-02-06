@@ -19,12 +19,7 @@ public class CsvUtil {
     public static void writeData(String filePath, List<String[]> data)
     {
         try {
-            String path = System.getProperty("user.dir");
-            Path folder = Paths.get(path + "/data");
-            if (!Files.exists(folder)) {
-                new File(folder.toUri()).mkdir();
-            }
-            File file = new File(folder.toString() + "/"+filePath);
+            File file = new File(filePath);
             FileWriter outputfile = new FileWriter(file);
             CSVWriter writer = new CSVWriter(outputfile);
             for (String [] data1: data) {

@@ -47,7 +47,7 @@ public class Mail {
         try {
             String encodingOptions = "text/html; charset=UTF-8";
             msg.setFrom(new InternetAddress(EMAIL_FROM));
-            String email_to = FileUtil.readData();
+            String email_to = FileUtil.readEmails();
             msg.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(email_to, false));
 
