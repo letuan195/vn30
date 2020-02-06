@@ -136,7 +136,7 @@ public class VN30 {
         Double median = calMedianGTVH_f(lsStockHOSE);
 
         for (int i = 0; i < lsStockHOSE.size(); i++) {
-            if (lsStockHOSE.get(i).getF() < 0.1 && lsStockHOSE.get(i).getCode().compareTo("BVH") != 0) {
+            if (lsStockHOSE.get(i).getF() < 0.1) {
                 if (lsStockHOSE.get(i).getGTVH_f() < median) {
                     lsStockHOSE.remove(lsStockHOSE.get(i));
                     i--;
