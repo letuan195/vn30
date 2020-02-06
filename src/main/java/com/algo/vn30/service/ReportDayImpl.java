@@ -93,7 +93,7 @@ public class ReportDayImpl implements ReportDayService {
 
         Boolean write = false;
         resultsCSV.add(new String[]{"STT", "Name", "GTVH Currnet", "GTVH Avg", "GTVH_f", "FreeFloat", "GTGD", "Turnover",
-                "PreVn30", "Real Move", "Status", "Number Month From ListedDate", "TOP 5 GTVH Current", "Median Top 90% GTVH_f",
+                "PreVn30", "Real Move", "Status", "Number of Months From Listed Date", "TOP 5 GTVH Current", "Median Top 90% GTVH_f",
                 "Compare with Median Top 90% GTVH_f", "Reason for rejection"});
         DecimalFormat f = new DecimalFormat("##.0000");
 
@@ -102,22 +102,12 @@ public class ReportDayImpl implements ReportDayService {
             if (index == -1) continue;
             count++;
             if (index < 30) {
-                if (count == 1) {
-                    resultsCSV.add(new String[]{"" + count, stockListHSX.get(i).getCode(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGtvhCurrent()).toPlainString(),
-                            "" + BigDecimal.valueOf(stockListHSX.get(i).getGTVH()).toPlainString(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGTVH_f()).toPlainString(),
-                            "" + stockListHSX.get(i).getF(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGTGD()).toPlainString(),
-                            "" + f.format(stockListHSX.get(i).getTurnover() / 100), getCodePre30(stockListHSX.get(i)), "VN30", getInOutVN30(stockListHSX.get(i), index),
-                            getLenlistedDate(stockListHSX.get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), stockListHSX.get(i)),
-                            BigDecimal.valueOf(vn30Result.getMedianGTVH_f()).toPlainString(), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), " "});
-                }
-                else {
-                    resultsCSV.add(new String[]{"" + count, stockListHSX.get(i).getCode(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGtvhCurrent()).toPlainString(),
-                            "" + BigDecimal.valueOf(stockListHSX.get(i).getGTVH()).toPlainString(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGTVH_f()).toPlainString(),
-                            "" + stockListHSX.get(i).getF(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGTGD()).toPlainString(),
-                            "" + f.format(stockListHSX.get(i).getTurnover() / 100), getCodePre30(stockListHSX.get(i)), "VN30", getInOutVN30(stockListHSX.get(i), index),
-                            getLenlistedDate(stockListHSX.get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), stockListHSX.get(i)),
-                            " ", getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), " "});
-                }
+                resultsCSV.add(new String[]{"" + count, stockListHSX.get(i).getCode(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGtvhCurrent()).toPlainString(),
+                        "" + BigDecimal.valueOf(stockListHSX.get(i).getGTVH()).toPlainString(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGTVH_f()).toPlainString(),
+                        "" + stockListHSX.get(i).getF(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGTGD()).toPlainString(),
+                        "" + f.format(stockListHSX.get(i).getTurnover() / 100), getCodePre30(stockListHSX.get(i)), "VN30", getInOutVN30(stockListHSX.get(i), index),
+                        getLenlistedDate(stockListHSX.get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), stockListHSX.get(i)),
+                        getMedianGTVH_f(vn30Result, stockListHSX.get(i).getCode()), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), " "});
             }
             if (index >= 30 && index < 35) {
                 resultsCSV.add(new String[]{"" + count, stockListHSX.get(i).getCode(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGtvhCurrent()).toPlainString(),
@@ -125,7 +115,7 @@ public class ReportDayImpl implements ReportDayService {
                         "" + stockListHSX.get(i).getF(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGTGD()).toPlainString(),
                         "" + f.format(stockListHSX.get(i).getTurnover() / 100), getCodePre30(stockListHSX.get(i)), "Substitute", getInOutVN30(stockListHSX.get(i), index),
                         getLenlistedDate(stockListHSX.get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), stockListHSX.get(i)),
-                        " ", getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, stockListHSX.get(i))});
+                        getMedianGTVH_f(vn30Result, stockListHSX.get(i).getCode()), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, stockListHSX.get(i))});
             }
             if (index >= 35) {
                 resultsCSV.add(new String[]{"" + count, stockListHSX.get(i).getCode(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGtvhCurrent()).toPlainString(),
@@ -133,7 +123,7 @@ public class ReportDayImpl implements ReportDayService {
                         "" + stockListHSX.get(i).getF(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGTGD()).toPlainString(),
                         "" + f.format(stockListHSX.get(i).getTurnover() / 100), getCodePre30(stockListHSX.get(i)), " ", getInOutVN30(stockListHSX.get(i), index),
                         getLenlistedDate(stockListHSX.get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), stockListHSX.get(i)),
-                        " ", getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, stockListHSX.get(i))});
+                        getMedianGTVH_f(vn30Result, stockListHSX.get(i).getCode()), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, stockListHSX.get(i))});
             }
         }
         resultsCSV.add(new String[]{" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "});
@@ -187,23 +177,30 @@ public class ReportDayImpl implements ReportDayService {
         return " ";
     }
 
+    private String getMedianGTVH_f(VN30Result vn30Result, String code) {
+        if (code.compareTo(vn30Result.getCodeMedian()) == 0) {
+            return BigDecimal.valueOf(vn30Result.getMedianGTVH_f()).toPlainString();
+        }
+        return " ";
+    }
+
     private String getReasonDisqualifi(VN30Result vn30Result, Stock stock) {
         List<String> lStrOutput = new ArrayList<>();
         String strOutput = "";
-        if (stock.getIsPreVN30()) {
-            System.out.println(stock.getCode());
-            if (stock.getHasWarning()) strOutput += "Has Warning";
-            if (stock.getLenFromListedDate() < 6 && (stock.getLenFromListedDate() < 3 || !vn30Result.getTop5GTVHCurrent().contains(stock)))
-                lStrOutput.add("Length from Listed Date too short");
-            if (stock.getF() < 0.1 && stock.getGTVH_f() < vn30Result.getMedianGTVH_f())
-                lStrOutput.add("Free Float too small");
-            if (stock.getTurnover() < 0.05 && (stock.getTurnover() < 0.04 || !stock.getIsPreVN30()))
-                lStrOutput.add("Turnover too small");
-            if (!vn30Result.getlStockVN30().contains(stock) && lStrOutput.size() == 0) lStrOutput.add("Traded value too small");
-            if (vn30Result.getlStockVN30().contains(stock) && vn30Result.getlStockVN30().indexOf(stock) > 40)
-                lStrOutput.add("Outside the top 40");
-        }
-        for (int i = 0; i < lStrOutput.size(); i++) strOutput += lStrOutput.get(i) + "; ";
+//        if (stock.getIsPreVN30()) {
+//            System.out.println(stock.getCode());
+//            if (stock.getHasWarning()) strOutput += "Has Warning";
+//            if (stock.getLenFromListedDate() < 6 && (stock.getLenFromListedDate() < 3 || !vn30Result.getTop5GTVHCurrent().contains(stock)))
+//                lStrOutput.add("Length from Listed Date too short");
+//            if (stock.getF() < 0.1 && stock.getGTVH_f() < vn30Result.getMedianGTVH_f())
+//                lStrOutput.add("Free Float < 10% and GTVH_f < Median top 90% GTVH_f");
+//            if (stock.getTurnover() < 0.05 && (stock.getTurnover() < 0.04 || !stock.getIsPreVN30()))
+//                lStrOutput.add("Turnover too small");
+//            if (!vn30Result.getlStockVN30().contains(stock) && lStrOutput.size() == 0) lStrOutput.add("Traded value not in top 90% GTGD");
+//            if (vn30Result.getlStockVN30().contains(stock) && vn30Result.getlStockVN30().indexOf(stock) > 40)
+//                lStrOutput.add("Outside the top 40 GTVH");
+//        }
+//        for (int i = 0; i < lStrOutput.size(); i++) strOutput += lStrOutput.get(i) + "; ";
 
         return strOutput;
     }

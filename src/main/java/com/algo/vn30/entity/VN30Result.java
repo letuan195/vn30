@@ -9,6 +9,7 @@ public class VN30Result {
     private List<Stock> top5GTVHCurrent;
     private Double medianGTVH_f;
     private Double minGTGDTop90;
+    private String codeMedian;
 
     public VN30Result() {
         lsStockHOSE = new ArrayList<>();
@@ -16,6 +17,7 @@ public class VN30Result {
         top5GTVHCurrent = new ArrayList<>();
         medianGTVH_f = 0.0;
         minGTGDTop90 = 10000000000000000.0;
+        codeMedian = "";
     }
 
     public void setLsStockHOSE(List<Stock> lsStockHOSE) { this.lsStockHOSE.addAll(lsStockHOSE); }
@@ -32,4 +34,7 @@ public class VN30Result {
 
     public void setMinGTGDTop90(Double minGTGDTop90) { this.minGTGDTop90 = minGTGDTop90; }
     public Double getMinGTGDTop90() { return minGTGDTop90; }
+
+    public void setCodeMedian(String codeMedian) { this.codeMedian = codeMedian; }
+    public String getCodeMedian() { return codeMedian; }
 }
