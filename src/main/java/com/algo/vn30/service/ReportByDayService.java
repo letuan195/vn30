@@ -80,7 +80,6 @@ public class ReportByDayService implements ReportByDayImpl {
             List<DailyDataImpl> historicalDailyDataList = dailyDataPersistence.findBySecIdAndDateAfter(securitiesList.get(i).getId(), dateStart, dateEnd);
             List<FreeFloatRealDataImpl> historicalFreeFloatRealDataList2 = freeFloatRealDataPersistence.findBySecIdAndDate(securitiesList.get(i).getId(), dateNewFreeFloat);
             if (historicalDailyDataList.size() == 0) {
-                count++;
                 continue;
             }
 //            System.out.println(historicalFreeFloatRealDataList2.size());
@@ -103,56 +102,77 @@ public class ReportByDayService implements ReportByDayImpl {
             dos.writeChars("sep=;\n");
             dos.writeChars("STT;Name;GTVH;FreeFloat;GTGD;TurnOver;PreVN30;Real Move\n");
 
-            for (int i = 0; i < 30; i++) {
-                write = false;
-                for (int j = 0; j < listPreVN30Code.size(); j++) {
-                    if (stockVN30.get(i).getCode().compareTo(listPreVN30Code.get(j)) == 0) {
-                        dos.writeChars(Integer.toString(i + 1) + ";" + stockVN30.get(i).getCode() + ";" + Double.toString(stockVN30.get(i).getGTVH()) +
-                                ";" + Double.toString(stockVN30.get(i).getF()) + ";" + Double.toString(stockVN30.get(i).getGTGD()) + ";" + Double.toString(stockVN30.get(i).getTurnover() / 100) +
-                                ";" + stockVN30.get(i).getCode() + ";VN30" + "\n");
-                        write = true;
-                        break;
-                    }
+            for (int i = 0; i < stockListHSX.size(); i++) {
+                int index = stockVN30.indexOf(stockListHSX.get(i));
+                if (index == -1) continue;
+                count++;
+                if (index < 30) {
+                    dos.writeChars(Integer.toString(count) + ";" + stockListHSX.get(i).getCode() + ";" + Double.toString(stockListHSX.get(i).getGTVH()) +
+                                ";" + Double.toString(stockListHSX.get(i).getF()) + ";" + Double.toString(stockListHSX.get(i).getGTGD()) + ";" + Double.toString(stockListHSX.get(i).getTurnover() / 100) +
+                                ";" + getCodePre30(stockListHSX.get(i)) + ";VN30;" + getInOutVN30(stockListHSX.get(i), index) + "\n");
                 }
-                if (!write) {
-                    dos.writeChars(Integer.toString(i + 1) + ";" + stockVN30.get(i).getCode() + ";" + Double.toString(stockVN30.get(i).getGTVH()) +
-                            ";" + Double.toString(stockVN30.get(i).getF()) + ";" + Double.toString(stockVN30.get(i).getGTGD()) + ";" + Double.toString(stockVN30.get(i).getTurnover() / 100) + ";;VN30;ADD\n");
+                if (index >= 30 && index < 35) {
+                    dos.writeChars(Integer.toString(count) + ";" + stockListHSX.get(i).getCode() + ";" + Double.toString(stockListHSX.get(i).getGTVH()) +
+                            ";" + Double.toString(stockListHSX.get(i).getF()) + ";" + Double.toString(stockListHSX.get(i).getGTGD()) + ";" + Double.toString(stockListHSX.get(i).getTurnover() / 100) +
+                            ";" + getCodePre30(stockListHSX.get(i)) + ";Substitute;" + getInOutVN30(stockListHSX.get(i), index) + "\n");
                 }
-            }
-
-            for (int i = 30; i < 35; i++) {
-                write = false;
-                for (int j = 0; j < listPreVN30Code.size(); j++) {
-                    if (stockVN30.get(i).getCode().compareTo(listPreVN30Code.get(j)) == 0) {
-                        dos.writeChars(Integer.toString(i + 1) + ";" + stockVN30.get(i).getCode() + ";" + Double.toString(stockVN30.get(i).getGTVH()) +
-                                ";" + Double.toString(stockVN30.get(i).getF()) + ";" + Double.toString(stockVN30.get(i).getGTGD()) + ";" + Double.toString(stockVN30.get(i).getTurnover() / 100) +
-                                ";" + stockVN30.get(i).getCode() + ";Substitute;REMOVE" + "\n");
-                        write = true;
-                        break;
-                    }
-                }
-                if (!write) {
-                    dos.writeChars(Integer.toString(i + 1) + ";" + stockVN30.get(i).getCode() + ";" + Double.toString(stockVN30.get(i).getGTVH()) +
-                            ";" + Double.toString(stockVN30.get(i).getF()) + ";" + Double.toString(stockVN30.get(i).getGTGD()) + ";" + Double.toString(stockVN30.get(i).getTurnover() / 100) + ";;Substitute\n");
+                if (index >= 35) {
+                    dos.writeChars(Integer.toString(count) + ";" + stockListHSX.get(i).getCode() + ";" + Double.toString(stockListHSX.get(i).getGTVH()) +
+                            ";" + Double.toString(stockListHSX.get(i).getF()) + ";" + Double.toString(stockListHSX.get(i).getGTGD()) + ";" + Double.toString(stockListHSX.get(i).getTurnover() / 100) +
+                            ";" + getCodePre30(stockListHSX.get(i)) + ";;" + getInOutVN30(stockListHSX.get(i), index) + "\n");
                 }
             }
 
-            for (int i = 35; i < stockVN30.size(); i++) {
-                write = false;
-                for (int j = 0; j < listPreVN30Code.size(); j++) {
-                    if (stockVN30.get(i).getCode().compareTo(listPreVN30Code.get(j)) == 0) {
-                        dos.writeChars(Integer.toString(i + 1) + ";" + stockVN30.get(i).getCode() + ";" + Double.toString(stockVN30.get(i).getGTVH()) +
-                                ";" + Double.toString(stockVN30.get(i).getF()) + ";" + Double.toString(stockVN30.get(i).getGTGD()) + ";" + Double.toString(stockVN30.get(i).getTurnover() / 100) +
-                                ";" + stockVN30.get(i).getCode() + ";;REMOVE" + "\n");
-                        write = true;
-                        break;
-                    }
-                }
-                if (!write) {
-                    dos.writeChars(Integer.toString(i + 1) + ";" + stockVN30.get(i).getCode() + ";" + Double.toString(stockVN30.get(i).getGTVH()) +
-                            ";" + Double.toString(stockVN30.get(i).getF()) + ";" + Double.toString(stockVN30.get(i).getGTGD()) + ";" + Double.toString(stockVN30.get(i).getTurnover() / 100) + ";;\n");
-                }
-            }
+//            for (int i = 0; i < 30; i++) {
+//                write = false;
+//                for (int j = 0; j < listPreVN30Code.size(); j++) {
+//                    if (stockVN30.get(i).getCode().compareTo(listPreVN30Code.get(j)) == 0) {
+//                        dos.writeChars(Integer.toString(i + 1) + ";" + stockVN30.get(i).getCode() + ";" + Double.toString(stockVN30.get(i).getGTVH()) +
+//                                ";" + Double.toString(stockVN30.get(i).getF()) + ";" + Double.toString(stockVN30.get(i).getGTGD()) + ";" + Double.toString(stockVN30.get(i).getTurnover() / 100) +
+//                                ";" + stockVN30.get(i).getCode() + ";VN30" + "\n");
+//                        write = true;
+//                        break;
+//                    }
+//                }
+//                if (!write) {
+//                    dos.writeChars(Integer.toString(i + 1) + ";" + stockVN30.get(i).getCode() + ";" + Double.toString(stockVN30.get(i).getGTVH()) +
+//                            ";" + Double.toString(stockVN30.get(i).getF()) + ";" + Double.toString(stockVN30.get(i).getGTGD()) + ";" + Double.toString(stockVN30.get(i).getTurnover() / 100) + ";;VN30;ADD\n");
+//                }
+//            }
+//
+//            for (int i = 30; i < 35; i++) {
+//                write = false;
+//                for (int j = 0; j < listPreVN30Code.size(); j++) {
+//                    if (stockVN30.get(i).getCode().compareTo(listPreVN30Code.get(j)) == 0) {
+//                        dos.writeChars(Integer.toString(i + 1) + ";" + stockVN30.get(i).getCode() + ";" + Double.toString(stockVN30.get(i).getGTVH()) +
+//                                ";" + Double.toString(stockVN30.get(i).getF()) + ";" + Double.toString(stockVN30.get(i).getGTGD()) + ";" + Double.toString(stockVN30.get(i).getTurnover() / 100) +
+//                                ";" + stockVN30.get(i).getCode() + ";Substitute;REMOVE" + "\n");
+//                        write = true;
+//                        break;
+//                    }
+//                }
+//                if (!write) {
+//                    dos.writeChars(Integer.toString(i + 1) + ";" + stockVN30.get(i).getCode() + ";" + Double.toString(stockVN30.get(i).getGTVH()) +
+//                            ";" + Double.toString(stockVN30.get(i).getF()) + ";" + Double.toString(stockVN30.get(i).getGTGD()) + ";" + Double.toString(stockVN30.get(i).getTurnover() / 100) + ";;Substitute\n");
+//                }
+//            }
+//
+//            for (int i = 35; i < stockVN30.size(); i++) {
+//                write = false;
+//                for (int j = 0; j < listPreVN30Code.size(); j++) {
+//                    if (stockVN30.get(i).getCode().compareTo(listPreVN30Code.get(j)) == 0) {
+//                        dos.writeChars(Integer.toString(i + 1) + ";" + stockVN30.get(i).getCode() + ";" + Double.toString(stockVN30.get(i).getGTVH()) +
+//                                ";" + Double.toString(stockVN30.get(i).getF()) + ";" + Double.toString(stockVN30.get(i).getGTGD()) + ";" + Double.toString(stockVN30.get(i).getTurnover() / 100) +
+//                                ";" + stockVN30.get(i).getCode() + ";;REMOVE" + "\n");
+//                        write = true;
+//                        break;
+//                    }
+//                }
+//                if (!write) {
+//                    dos.writeChars(Integer.toString(i + 1) + ";" + stockVN30.get(i).getCode() + ";" + Double.toString(stockVN30.get(i).getGTVH()) +
+//                            ";" + Double.toString(stockVN30.get(i).getF()) + ";" + Double.toString(stockVN30.get(i).getGTGD()) + ";" + Double.toString(stockVN30.get(i).getTurnover() / 100) + ";;\n");
+//                }
+//            }
             fos.close();
             dos.close();
         } catch (FileNotFoundException e) {
@@ -160,5 +180,21 @@ public class ReportByDayService implements ReportByDayImpl {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        }
+
+        private String getCodePre30(Stock stock) {
+            if (stock.getIsPreVN30()) return stock.getCode();
+            else return "";
+        }
+
+        private String getInOutVN30(Stock stock, int index) {
+            if (stock.getIsPreVN30()) {
+                if (index > 30) return "REMOVE";
+                else return "";
+            }
+            else {
+                if (index < 30) return "ADD";
+                else return "";
+            }
         }
 }
