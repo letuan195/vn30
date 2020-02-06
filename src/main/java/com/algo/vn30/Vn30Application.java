@@ -37,7 +37,7 @@ public class Vn30Application implements CommandLineRunner  {
     @Override
     public void run(String... args) throws Exception {
         try {
-            worker.start("pl");
+            worker.start("vn30");
         } catch (Exception e) {
             try {
             } catch (Exception ignored) {

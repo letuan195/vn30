@@ -19,4 +19,7 @@ public interface FreeFloatDataPersistence extends CrudRepository<FreeFloatDataIm
     @Query("SELECT t FROM FreeFloatDataImpl t WHERE t.sec_id = :sec_id and t.date = :date")
     List<FreeFloatDataImpl> findBySecIdAndDate(@Param("sec_id") Long sec_id, @Param("date") Date date);
 
+    @Query("SELECT t FROM FreeFloatDataImpl t WHERE t.date = :date")
+    List<FreeFloatDataImpl> findBydDate(@Param("date") Date date);
+
 }

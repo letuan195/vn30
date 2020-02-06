@@ -5,12 +5,17 @@ import com.algo.vn30.persistence.DailyDataPersistence;
 import com.algo.vn30.persistence.FreeFloatDataPersistence;
 import com.algo.vn30.persistence.FreeFloatRealDataPersistence;
 import com.algo.vn30.persistence.SecurityPersistence;
-import com.algo.vn30.service.ReportByDayService;
+import com.algo.vn30.service.ReportDayImpl;
+import com.algo.vn30.utils.Mail;
 import com.algo.vn30.worker.AbstractWorker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -33,24 +38,34 @@ public class Worker extends AbstractWorker {
     private FreeFloatRealDataPersistence freeFloatRealDataPersistence;
 
     @Autowired
-    ReportByDayService reportByDay;
+    ReportDayImpl reportByDay;
 
     @Override
     public void onStarted() {
-        // do something
-        /*System.out.println("run ok");
-        try { vn30_backup(); }
-        catch (Exception i) {
-
-        }*/
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date();
+        String path = null;
         try {
-            date = format.parse("2020-02-04");
-        } catch (Exception e) {
-
+            path = reportByDay.getReport(format.parse(format.format(date)));
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-        reportByDay.getReport(date);
+        String root = System.getProperty("user.dir");
+        Mail.sendGmail(root + "/data/"+path);
+    }
+
+    @Scheduled(cron = "0 0 15 * * *")
+    public void getVN30Everyday(){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        String path = null;
+        try {
+            path = reportByDay.getReport(format.parse(format.format(date)));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String root = System.getProperty("user.dir");
+        Mail.sendGmail(root + "/data/"+path);
     }
 
     public void vn30() throws ParseException, IOException {
