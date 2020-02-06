@@ -173,7 +173,7 @@ public class VN30 {
         for (int i = 0; i < lsA3.size(); i++) {
             if (!lsVN30.contains(lsA3.get(i)) && lsVN30.size() < 100) { lsVN30.add(lsA3.get(i)); }
         }
-
+        sortListStockByGTVH(lsStockHOSE);
         return lsVN30;
     }
 }
