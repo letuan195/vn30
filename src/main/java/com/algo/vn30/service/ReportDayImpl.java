@@ -42,7 +42,7 @@ public class ReportDayImpl implements ReportDayService {
         int month = localDate.getMonthValue();
         int year = localDate.getYear();
         int yearPre = localDate.getYear() - 1;
-        String path = "vn30_" + day + "-" + month + "-" + year + ".csv";
+        String path = "D://config/data/vn30_" + day + "-" + month + "-" + year + ".csv";
 
         Date dateStart = null;
         Date dateEnd = date;
@@ -116,53 +116,6 @@ public class ReportDayImpl implements ReportDayService {
             }
         }
 
-//        for (int i = 0; i < 30; i++) {
-//            write = false;
-//            for (int j = 0; j < listPreVN30Code.size(); j++) {
-//                if (stockVN30.get(i).getCode().compareTo(listPreVN30Code.get(j)) == 0) {
-//                    resultsCSV.add(new String[]{"" + (i + 1), stockVN30.get(i).getCode(), "" + BigDecimal.valueOf(stockVN30.get(i).getGTVH()).toPlainString(), "" + stockVN30.get(i).getF(),
-//                            "" + BigDecimal.valueOf(stockVN30.get(i).getGTGD()).toPlainString(), "" + f.format(stockVN30.get(i).getTurnover() / 100), "" + stockVN30.get(i).getCode(), "VN30"});
-//                    write = true;
-//                    break;
-//                }
-//            }
-//            if (!write) {
-//                resultsCSV.add(new String[]{"" + (i + 1), stockVN30.get(i).getCode(), "" + BigDecimal.valueOf(stockVN30.get(i).getGTVH()).toPlainString(), "" + stockVN30.get(i).getF(),
-//                        "" + BigDecimal.valueOf(stockVN30.get(i).getGTGD()).toPlainString(), "" + f.format(stockVN30.get(i).getTurnover() / 100), "" + stockVN30.get(i).getCode(), "VN30 (ADD)"});
-//            }
-//        }
-//
-//        for (int i = 30; i < 35; i++) {
-//            write = false;
-//            for (int j = 0; j < listPreVN30Code.size(); j++) {
-//                if (stockVN30.get(i).getCode().compareTo(listPreVN30Code.get(j)) == 0) {
-//                    resultsCSV.add(new String[]{"" + (i + 1), stockVN30.get(i).getCode(), "" + BigDecimal.valueOf(stockVN30.get(i).getGTVH()).toPlainString(), "" + stockVN30.get(i).getF(),
-//                            "" + BigDecimal.valueOf(stockVN30.get(i).getGTGD()).toPlainString(), "" + f.format(stockVN30.get(i).getTurnover() / 100), "" + stockVN30.get(i).getCode(), "Substitute (REMOVE)"});
-//                    write = true;
-//                    break;
-//                }
-//            }
-//            if (!write) {
-//                resultsCSV.add(new String[]{"" + (i + 1), stockVN30.get(i).getCode(), "" + BigDecimal.valueOf(stockVN30.get(i).getGTVH()).toPlainString(), "" + stockVN30.get(i).getF(),
-//                        "" + BigDecimal.valueOf(stockVN30.get(i).getGTGD()).toPlainString(), "" + f.format(stockVN30.get(i).getTurnover() / 100), "", "Substitute"});
-//            }
-//        }
-//
-//        for (int i = 35; i < stockVN30.size(); i++) {
-//            write = false;
-//            for (int j = 0; j < listPreVN30Code.size(); j++) {
-//                if (stockVN30.get(i).getCode().compareTo(listPreVN30Code.get(j)) == 0) {
-//                    resultsCSV.add(new String[]{"" + (i + 1), stockVN30.get(i).getCode(), "" + BigDecimal.valueOf(stockVN30.get(i).getGTVH()).toPlainString(), "" + stockVN30.get(i).getF(),
-//                            "" + stockVN30.get(i).getGTGD().toString(), "" + f.format(stockVN30.get(i).getTurnover() / 100), "" + stockVN30.get(i).getCode(), "(REMOVE)"});
-//                    write = true;
-//                    break;
-//                }
-//            }
-//            if (!write) {
-//                resultsCSV.add(new String[]{"" + (i + 1), stockVN30.get(i).getCode(), "" + BigDecimal.valueOf(stockVN30.get(i).getGTVH()).toPlainString(), "" + stockVN30.get(i).getF(),
-//                        "" + stockVN30.get(i).getGTGD().toString(), "" + f.format(stockVN30.get(i).getTurnover() / 100), "", ""});
-//            }
-//        }
         CsvUtil.writeData(path, resultsCSV);
         return path;
     }

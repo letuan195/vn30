@@ -44,8 +44,7 @@ public class FileUtil {
     }
 
     public static String readEmails() {
-        String root = System.getProperty("user.dir");
-        String path = root + "/data/emails.txt";
+        String path = "D://config/emails.txt";
         File file = new File(path);
 
         BufferedReader br = null;

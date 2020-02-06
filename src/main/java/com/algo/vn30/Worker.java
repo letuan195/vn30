@@ -50,8 +50,7 @@ public class Worker extends AbstractWorker {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        String root = System.getProperty("user.dir");
-        Mail.sendGmail(root + "/data/"+path);
+        Mail.sendGmail(path);
     }
 
     @Scheduled(cron = "0 0 15 * * *")
@@ -64,8 +63,7 @@ public class Worker extends AbstractWorker {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        String root = System.getProperty("user.dir");
-        Mail.sendGmail(root + "/data/"+path);
+        Mail.sendGmail(path);
     }
 
     public void vn30() throws ParseException, IOException {
