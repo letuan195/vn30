@@ -5,6 +5,8 @@ import com.algo.vn30.persistence.SecurityPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.Period;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +26,7 @@ public class Stock {
     private Boolean isPreVN30;
     private Integer lenFromListedDate;
 
-    public Stock(Long id, String code, Boolean isPreVN30, List<DailyDataImpl> historicalDailyDataListCurrent, List<DailyDataImpl> historicalDailyDataList) {
+    public Stock(Long id, String code, Date listedDate, Boolean isPreVN30, List<DailyDataImpl> historicalDailyDataList) {
         this.id = id;
         this.code = code;
         this.isPreVN30 = isPreVN30;
@@ -33,13 +35,13 @@ public class Stock {
         {
             this.hasWarning = true;
         }
-        if (historicalDailyDataListCurrent.size() > 0) {
-            if (historicalDailyDataListCurrent.get(0).getFree_shares() != null && historicalDailyDataList.get(0).getShares() != null) {
-                this.f = historicalDailyDataListCurrent.get(0).getFree_shares().doubleValue() / historicalDailyDataList.get(0).getShares().doubleValue();
+
+        for (int i = 0; i < historicalDailyDataList.size(); i++) {
+            if (historicalDailyDataList.get(i).getFree_shares() != null && historicalDailyDataList.get(i).getShares() != null) {
+                this.f = historicalDailyDataList.get(i).getFree_shares().doubleValue() / historicalDailyDataList.get(i).getShares().doubleValue();
+                break;
             }
-            else { this.f = 0.0; }
         }
-        else { this.f = 0.0; }
         this.gtvhCurrent = historicalDailyDataList.get(0).getMarket_cap().doubleValue();
 
         Date date = historicalDailyDataList.get(0).getDate();
@@ -74,7 +76,6 @@ public class Stock {
             }
         }
         if (count <= 12) {
-            this.lenFromListedDate = count;
             Collections.sort(ddGTGD);
             int index = ddGTGD.size();
             if (index % 2 == 0) { median = (ddGTGD.get(index / 2) + ddGTGD.get(index / 2 - 1)) / 2; }
@@ -83,15 +84,19 @@ public class Stock {
             this.gtgd = sum / count;
         }
         else {
-            this.lenFromListedDate = count - 1;
             this.gtgd = sum / (count - 1);
         }
+        Period period = Period.between(listedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                historicalDailyDataList.get(0).getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        this.lenFromListedDate = period.getYears() * 12 + period.getMonths();
+//        this.lenFromListedDate = Period.between(listedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+//                historicalDailyDataList.get(0).getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).getMonths();
         this.gtvh = sumGTVH / countDay;
         this.gtvh_f = this.gtvh * this.f;
         this.turnover = this.gtgd / this.gtvh_f * 100;
     }
 
-    public Stock(Long id, String code, Boolean isPreVN30, Double f, List<DailyDataImpl> historicalDailyDataList) {
+    public Stock(Long id, String code, Date listedDate, Boolean isPreVN30, Double f, List<DailyDataImpl> historicalDailyDataList) {
         this.id = id;
         this.code = code;
         this.isPreVN30 = isPreVN30;
@@ -135,7 +140,6 @@ public class Stock {
             }
         }
         if (count <= 12) {
-            this.lenFromListedDate = count;
             Collections.sort(ddGTGD);
             int index = ddGTGD.size();
             if (index % 2 == 0) { median = (ddGTGD.get(index / 2) + ddGTGD.get(index / 2 - 1)) / 2; }
@@ -144,9 +148,16 @@ public class Stock {
             this.gtgd = sum / count;
         }
         else {
-            this.lenFromListedDate = count - 1;
             this.gtgd = sum / (count - 1);
         }
+        if (code.compareTo("EIB") == 0) {
+            System.out.println("herere");
+        }
+        Period period = Period.between(listedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                historicalDailyDataList.get(0).getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        this.lenFromListedDate = period.getYears() * 12 + period.getMonths();
+//        this.lenFromListedDate = Period.between(historicalDailyDataList.get(historicalDailyDataList.size() - 1).getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+//                historicalDailyDataList.get(0).getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).getMonths();
         this.gtvh = sumGTVH / countDay;
         this.gtvh_f = this.gtvh * this.f;
         this.turnover = this.gtgd / this.gtvh_f * 100;
