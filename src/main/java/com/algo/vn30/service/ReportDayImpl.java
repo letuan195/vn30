@@ -93,7 +93,7 @@ public class ReportDayImpl implements ReportDayService {
 
         Boolean write = false;
         resultsCSV.add(new String[]{"STT", "Name", "GTVH Currnet", "GTVH Avg", "GTVH_f", "FreeFloat", "GTGD", "Turnover",
-                "PreVn30", "Real Move", "Status", "No. of Months from Listing for New Listed Share", "TOP 5 GTVH Current", "Median Top 90% GTVH_f",
+                "PreVn30", "Status", "Real Move", "No. of Months from Listing for New Listed Share", "TOP 5 GTVH Current", "Median Top 90% GTVH_f",
                 "Compare with Median Top 90% GTVH_f", "Reason for rejection"});
         DecimalFormat f = new DecimalFormat("##.0000");
 
