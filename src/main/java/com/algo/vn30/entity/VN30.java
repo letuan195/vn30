@@ -167,6 +167,11 @@ public class VN30 {
         // II.5 bỏ qua
         // Ưu tiên (bỏ qua đk cảnh báo)
         List<Stock> lsA3 = getListStocksCumulativeGTGD(lsStockHOSE);
+        for (int i = 0; i < lsA3.size(); i++) {
+            if (vn30Result.getMinGTGDTop90() > lsA3.get(i).getGTGD()) {
+                vn30Result.setMinGTGDTop90(lsA3.get(i).getGTGD());
+            }
+        }
 
         for (int i = 0; i < 20; i++) { vn30Result.getlStockVN30().add(lsA3.get(i)); }
         for (int i = 20; i < 40; i++) {

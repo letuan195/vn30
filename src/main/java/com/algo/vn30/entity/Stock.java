@@ -47,7 +47,7 @@ public class Stock {
         Date date = historicalDailyDataList.get(0).getDate();
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         int monthTemp = localDate.getMonthValue();
-        int count = 1;
+        int count = 0;
         int countDay = 0;
         Double median = 0.0;
         Double sum = 0.0;
@@ -123,7 +123,7 @@ public class Stock {
         Date date = historicalDailyDataList.get(0).getDate();
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         int monthTemp = localDate.getMonthValue();
-        int count = 1;
+        int count = 0;
         int countDay = 0;
         Double median = 0.0;
         Double sum = 0.0;
