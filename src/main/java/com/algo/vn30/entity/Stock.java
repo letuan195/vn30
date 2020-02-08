@@ -69,23 +69,35 @@ public class Stock {
                 sum += median;
                 ddGTGD = new ArrayList<>();
                 ddGTGD.add(historicalDailyDataList.get(i).getTrade_value());
-                if (count > 12) { break; }
             }
             else {
                 ddGTGD.add(historicalDailyDataList.get(i).getTrade_value());
             }
         }
-        if (count <= 12) {
-            Collections.sort(ddGTGD);
+        if (ddGTGD.size() != 0) {
             int index = ddGTGD.size();
-            if (index % 2 == 0) { median = (ddGTGD.get(index / 2) + ddGTGD.get(index / 2 - 1)) / 2; }
-            else { median = ddGTGD.get((index -1) / 2); }
+            Collections.sort(ddGTGD);
+            if (index % 2 == 0) {
+                median = (ddGTGD.get(index / 2) + ddGTGD.get(index / 2 - 1)) / 2;
+            } else {
+                median = ddGTGD.get((index - 1) / 2);
+            }
+            count += 1;
             sum += median;
             this.gtgd = sum / count;
         }
-        else {
-            this.gtgd = sum / (count - 1);
-        }
+
+//        if (count <= 12) {
+//            Collections.sort(ddGTGD);
+//            int index = ddGTGD.size();
+//            if (index % 2 == 0) { median = (ddGTGD.get(index / 2) + ddGTGD.get(index / 2 - 1)) / 2; }
+//            else { median = ddGTGD.get((index -1) / 2); }
+//            sum += median;
+//            this.gtgd = sum / count;
+//        }
+//        else {
+//            this.gtgd = sum / (count - 1);
+//        }
         Period period = Period.between(listedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
                 historicalDailyDataList.get(0).getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         this.lenFromListedDate = period.getYears() * 12 + period.getMonths();
@@ -118,6 +130,11 @@ public class Stock {
         Double sumGTVH = 0.0;
         List<Double> ddGTGD = new ArrayList<>();
         for (int i = 0; i < historicalDailyDataList.size(); i++) {
+            if (code.compareTo("CTD") == 0) {
+                System.out.println(historicalDailyDataList.get(i).getDate());
+                System.out.println(i);
+                System.out.println(historicalDailyDataList.size());
+            }
             countDay += 1;
             sumGTVH += historicalDailyDataList.get(i).getMarket_cap();
             date = historicalDailyDataList.get(i).getDate();
@@ -128,31 +145,42 @@ public class Stock {
                 count += 1;
                 Collections.sort(ddGTGD);
                 int index = ddGTGD.size();
-                if (index % 2 == 0) { median = (ddGTGD.get(index / 2) + ddGTGD.get(index / 2 - 1)) / 2; }
-                else { median = ddGTGD.get((index -1) / 2); }
+                if (index % 2 == 0) {
+                    median = (ddGTGD.get(index / 2) + ddGTGD.get(index / 2 - 1)) / 2;
+                } else {
+                    median = ddGTGD.get((index - 1) / 2);
+                }
                 sum += median;
                 ddGTGD = new ArrayList<>();
                 ddGTGD.add(historicalDailyDataList.get(i).getTrade_value());
-                if (count > 12) { break; }
-            }
-            else {
+            } else {
                 ddGTGD.add(historicalDailyDataList.get(i).getTrade_value());
             }
         }
-        if (count <= 12) {
-            Collections.sort(ddGTGD);
+        if (ddGTGD.size() != 0) {
             int index = ddGTGD.size();
-            if (index % 2 == 0) { median = (ddGTGD.get(index / 2) + ddGTGD.get(index / 2 - 1)) / 2; }
-            else { median = ddGTGD.get((index -1) / 2); }
+            Collections.sort(ddGTGD);
+            if (index % 2 == 0) {
+                median = (ddGTGD.get(index / 2) + ddGTGD.get(index / 2 - 1)) / 2;
+            } else {
+                median = ddGTGD.get((index - 1) / 2);
+            }
+            count += 1;
             sum += median;
             this.gtgd = sum / count;
         }
-        else {
-            this.gtgd = sum / (count - 1);
-        }
-        if (code.compareTo("EIB") == 0) {
-            System.out.println("herere");
-        }
+
+//        if (count <= 12) {
+//            Collections.sort(ddGTGD);
+//            int index = ddGTGD.size();
+//            if (index % 2 == 0) { median = (ddGTGD.get(index / 2) + ddGTGD.get(index / 2 - 1)) / 2; }
+//            else { median = ddGTGD.get((index -1) / 2); }
+//            sum += median;
+//            this.gtgd = sum / count;
+//        }
+//        else {
+//            this.gtgd = sum / (count - 1);
+//        }
         Period period = Period.between(listedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
                 historicalDailyDataList.get(0).getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         this.lenFromListedDate = period.getYears() * 12 + period.getMonths();
