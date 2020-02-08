@@ -74,7 +74,7 @@ public class Stock {
                 ddGTGD.add(historicalDailyDataList.get(i).getTrade_value());
             }
         }
-        if (ddGTGD.size() != 0) {
+        if (ddGTGD.size() != 0 && count  < 12) {
             int index = ddGTGD.size();
             Collections.sort(ddGTGD);
             if (index % 2 == 0) {
@@ -84,6 +84,9 @@ public class Stock {
             }
             count += 1;
             sum += median;
+            this.gtgd = sum / count;
+        }
+        else {
             this.gtgd = sum / count;
         }
 
@@ -157,7 +160,7 @@ public class Stock {
                 ddGTGD.add(historicalDailyDataList.get(i).getTrade_value());
             }
         }
-        if (ddGTGD.size() != 0) {
+        if (ddGTGD.size() != 0 && count  < 12) {
             int index = ddGTGD.size();
             Collections.sort(ddGTGD);
             if (index % 2 == 0) {
@@ -167,6 +170,9 @@ public class Stock {
             }
             count += 1;
             sum += median;
+            this.gtgd = sum / count;
+        }
+        else {
             this.gtgd = sum / count;
         }
 
