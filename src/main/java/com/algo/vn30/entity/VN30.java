@@ -113,6 +113,7 @@ public class VN30 {
 
     public static VN30Result getVN30(List<Stock> lsStockHOSE) {
         VN30Result vn30Result = new VN30Result();
+        sortListStockByGTVH(lsStockHOSE);
         vn30Result.setLsStockHOSE(lsStockHOSE);
 //        List<Stock> lsVN30preventive = new ArrayList<>();
 //        return lsStockHOSE;

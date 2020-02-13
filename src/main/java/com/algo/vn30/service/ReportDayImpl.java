@@ -92,9 +92,9 @@ public class ReportDayImpl implements ReportDayService {
         List<String[]> resultsCSV = new ArrayList<>();
 
         Boolean write = false;
-        resultsCSV.add(new String[]{"STT", "Name", "GTVH Currnet", "GTVH Avg", "GTVH_f", "FreeFloat", "GTGD", "Turnover",
-                "PreVn30", "Status", "Real Move", "No. of Months from Listing for New Listed Share", "TOP 5 GTVH Current", "Median Top 90% GTVH_f",
-                "Compare with Median Top 90% GTVH_f", "Reason for rejection"});
+        resultsCSV.add(new String[]{"Series Number", "Name", "Market Cap Currnet", "Market Cap Avg", "Market Cap Adjusted", "FreeFloat", "Traded Value", "Turnover",
+                "PreVn30", "Status", "Real Move", "No. of Months from Listing for New Listed Share", "TOP 5 of Market Cap Current", "Median of Top 90% Market Cap Adjusted",
+                "Compare with Median of Top 90% Market Cap Adjusted", "Reason for rejection"});
         DecimalFormat f = new DecimalFormat("##.0000000");
 
         for (int i = 0; i < stockListHSX.size(); i++) {
@@ -127,15 +127,29 @@ public class ReportDayImpl implements ReportDayService {
             }
         }
         resultsCSV.add(new String[]{" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "});
-        resultsCSV.add(new String[]{"Stock REMOVE", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "});
+//        resultsCSV.add(new String[]{"Stock REMOVE", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "});
         count = 0;
         for (int i = 0; i < vn30Result.getLsStockHOSE().size(); i++) {
             if (!vn30Result.getlStockVN30().contains(vn30Result.getLsStockHOSE().get(i)) && vn30Result.getLsStockHOSE().get(i).getIsPreVN30()) {
                 count++;
-                resultsCSV.add(new String[]{"" + count, vn30Result.getLsStockHOSE().get(i).getCode(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGtvhCurrent()).toPlainString(),
+                resultsCSV.add(new String[]{"" + count * -1, vn30Result.getLsStockHOSE().get(i).getCode(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGtvhCurrent()).toPlainString(),
                         "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTVH()).toPlainString(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTVH_f()).toPlainString(),
                         "" + vn30Result.getLsStockHOSE().get(i).getF(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTGD()).toPlainString(),
                         "" + f.format(vn30Result.getLsStockHOSE().get(i).getTurnover() / 100), getCodePre30(vn30Result.getLsStockHOSE().get(i)), " ", "REMOVE",
+                        getLenlistedDate(vn30Result.getLsStockHOSE().get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), vn30Result.getLsStockHOSE().get(i)),
+                        " ", getOperator(vn30Result.getLsStockHOSE().get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, vn30Result.getLsStockHOSE().get(i))});
+            }
+        }
+        for (int i = 0; i < vn30Result.getlStockVN30().size() + 5; i++) {
+            if (!vn30Result.getlStockVN30().contains(vn30Result.getLsStockHOSE().get(i)) &&
+                    !vn30Result.getlStockVN30().contains(vn30Result.getLsStockHOSE().get(i)) && !vn30Result.getLsStockHOSE().get(i).getIsPreVN30() &&
+                    ((vn30Result.getLsStockHOSE().get(i).getTurnover() < 0.05 && vn30Result.getLsStockHOSE().get(i).getTurnover() > 0.04) ||
+                            (vn30Result.getLsStockHOSE().get(i).getF() < 0.1 && vn30Result.getLsStockHOSE().get(i).getGTVH_f() > 0.9 * vn30Result.getMedianGTVH_f()))) {
+                count++;
+                resultsCSV.add(new String[]{"" + count * -1, vn30Result.getLsStockHOSE().get(i).getCode(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGtvhCurrent()).toPlainString(),
+                        "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTVH()).toPlainString(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTVH_f()).toPlainString(),
+                        "" + vn30Result.getLsStockHOSE().get(i).getF(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTGD()).toPlainString(),
+                        "" + f.format(vn30Result.getLsStockHOSE().get(i).getTurnover() / 100), getCodePre30(vn30Result.getLsStockHOSE().get(i)), " ", " ",
                         getLenlistedDate(vn30Result.getLsStockHOSE().get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), vn30Result.getLsStockHOSE().get(i)),
                         " ", getOperator(vn30Result.getLsStockHOSE().get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, vn30Result.getLsStockHOSE().get(i))});
             }
@@ -204,9 +218,9 @@ public class ReportDayImpl implements ReportDayService {
         List<String[]> resultsCSV = new ArrayList<>();
 
         Boolean write = false;
-        resultsCSV.add(new String[]{"STT", "Name", "GTVH Currnet", "GTVH Avg", "GTVH_f", "FreeFloat", "GTGD", "Turnover",
-                "PreVn30", "Status", "Real Move", "No. of Months from Listing for New Listed Share", "TOP 5 GTVH Current", "Median Top 90% GTVH_f",
-                "Compare with Median Top 90% GTVH_f", "Reason for rejection"});
+        resultsCSV.add(new String[]{"Series Number", "Name", "Market Cap Currnet", "Market Cap Avg", "Market Cap Adjusted", "FreeFloat", "Traded Value", "Turnover",
+                "PreVn30", "Status", "Real Move", "No. of Months from Listing for New Listed Share", "TOP 5 of Market Cap Current", "Median of Top 90% Market Cap Adjusted",
+                "Compare with Median of Top 90% Market Cap Adjusted", "Reason for rejection"});
         DecimalFormat f = new DecimalFormat("##.0000000");
 
         for (int i = 0; i < stockListHSX.size(); i++) {
@@ -239,15 +253,29 @@ public class ReportDayImpl implements ReportDayService {
             }
         }
         resultsCSV.add(new String[]{" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "});
-        resultsCSV.add(new String[]{"Stock REMOVE", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "});
+//        resultsCSV.add(new String[]{"Stock REMOVE", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "});
         count = 0;
         for (int i = 0; i < vn30Result.getLsStockHOSE().size(); i++) {
             if (!vn30Result.getlStockVN30().contains(vn30Result.getLsStockHOSE().get(i)) && vn30Result.getLsStockHOSE().get(i).getIsPreVN30()) {
                 count++;
-                resultsCSV.add(new String[]{"" + count, vn30Result.getLsStockHOSE().get(i).getCode(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGtvhCurrent()).toPlainString(),
+                resultsCSV.add(new String[]{"" + count * -1, vn30Result.getLsStockHOSE().get(i).getCode(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGtvhCurrent()).toPlainString(),
                         "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTVH()).toPlainString(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTVH_f()).toPlainString(),
                         "" + vn30Result.getLsStockHOSE().get(i).getF(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTGD()).toPlainString(),
                         "" + f.format(vn30Result.getLsStockHOSE().get(i).getTurnover() / 100), getCodePre30(vn30Result.getLsStockHOSE().get(i)), " ", "REMOVE",
+                        getLenlistedDate(vn30Result.getLsStockHOSE().get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), vn30Result.getLsStockHOSE().get(i)),
+                        " ", getOperator(vn30Result.getLsStockHOSE().get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, vn30Result.getLsStockHOSE().get(i))});
+            }
+        }
+        for (int i = 0; i < vn30Result.getlStockVN30().size() + 5; i++) {
+            if (!vn30Result.getlStockVN30().contains(vn30Result.getLsStockHOSE().get(i)) &&
+                    !vn30Result.getlStockVN30().contains(vn30Result.getLsStockHOSE().get(i)) && !vn30Result.getLsStockHOSE().get(i).getIsPreVN30() &&
+                    ((vn30Result.getLsStockHOSE().get(i).getTurnover() < 0.05 && vn30Result.getLsStockHOSE().get(i).getTurnover() > 0.04) ||
+                            (vn30Result.getLsStockHOSE().get(i).getF() < 0.1 && vn30Result.getLsStockHOSE().get(i).getGTVH_f() > 0.9 * vn30Result.getMedianGTVH_f()))) {
+                count++;
+                resultsCSV.add(new String[]{"" + count * -1, vn30Result.getLsStockHOSE().get(i).getCode(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGtvhCurrent()).toPlainString(),
+                        "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTVH()).toPlainString(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTVH_f()).toPlainString(),
+                        "" + vn30Result.getLsStockHOSE().get(i).getF(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTGD()).toPlainString(),
+                        "" + f.format(vn30Result.getLsStockHOSE().get(i).getTurnover() / 100), getCodePre30(vn30Result.getLsStockHOSE().get(i)), " ", " ",
                         getLenlistedDate(vn30Result.getLsStockHOSE().get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), vn30Result.getLsStockHOSE().get(i)),
                         " ", getOperator(vn30Result.getLsStockHOSE().get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, vn30Result.getLsStockHOSE().get(i))});
             }

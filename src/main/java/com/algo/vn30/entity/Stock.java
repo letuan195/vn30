@@ -108,7 +108,8 @@ public class Stock {
 //                historicalDailyDataList.get(0).getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).getMonths();
         this.gtvh = sumGTVH / countDay;
         this.gtvh_f = this.gtvh * this.f;
-        this.turnover = this.gtgd / this.gtvh_f * 100;
+        if (this.gtvh_f == 0.0) { this.turnover = 0.0; }
+        else { this.turnover = this.gtgd / this.gtvh_f * 100; }
     }
 
     public Stock(Long id, String code, Date listedDate, Boolean isPreVN30, Double f, List<DailyDataImpl> historicalDailyDataList) {
@@ -133,11 +134,6 @@ public class Stock {
         Double sumGTVH = 0.0;
         List<Double> ddGTGD = new ArrayList<>();
         for (int i = 0; i < historicalDailyDataList.size(); i++) {
-            if (code.compareTo("CTD") == 0) {
-                System.out.println(historicalDailyDataList.get(i).getDate());
-                System.out.println(i);
-                System.out.println(historicalDailyDataList.size());
-            }
             countDay += 1;
             sumGTVH += historicalDailyDataList.get(i).getMarket_cap();
             date = historicalDailyDataList.get(i).getDate();
@@ -194,7 +190,8 @@ public class Stock {
 //                historicalDailyDataList.get(0).getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).getMonths();
         this.gtvh = sumGTVH / countDay;
         this.gtvh_f = this.gtvh * this.f;
-        this.turnover = this.gtgd / this.gtvh_f * 100;
+        if (this.gtvh_f == 0.0) { this.turnover = 0.0; }
+        else { this.turnover = this.gtgd / this.gtvh_f * 100; }
     }
 
     public Double getF() { return f; }
