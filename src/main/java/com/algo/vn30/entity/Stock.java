@@ -25,6 +25,8 @@ public class Stock {
     private Boolean hasWarning;
     private Boolean isPreVN30;
     private Integer lenFromListedDate;
+    private List<Double> medianList;
+    private List<Date> monthList;
 
     public Stock(Long id, String code, Date listedDate, Boolean isPreVN30, List<DailyDataImpl> historicalDailyDataList) {
         this.id = id;
@@ -36,8 +38,9 @@ public class Stock {
             this.hasWarning = true;
         }
 
+        this.f = 0.0;
         for (int i = 0; i < historicalDailyDataList.size(); i++) {
-            if (historicalDailyDataList.get(i).getFree_shares() != null && historicalDailyDataList.get(i).getShares() != null) {
+            if (historicalDailyDataList.get(i).getFree_shares() != null && historicalDailyDataList.get(i).getShares() != null && historicalDailyDataList.get(i).getShares() != 0) {
                 this.f = historicalDailyDataList.get(i).getFree_shares().doubleValue() / historicalDailyDataList.get(i).getShares().doubleValue();
                 break;
             }
@@ -194,6 +197,62 @@ public class Stock {
         else { this.turnover = this.gtgd / this.gtvh_f * 100; }
     }
 
+    public Stock(Long id, String code, List<DailyDataImpl> historicalDailyDataList) {
+        this.id = id;
+        this.code = code;
+        medianList = new ArrayList<>();
+        monthList = new ArrayList<>();
+        Date date = historicalDailyDataList.get(0).getDate();
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        int monthTemp = localDate.getMonthValue();
+        monthList.add(date);
+        int count = 0;
+        int countDay = 0;
+        Double median = 0.0;
+        Double sum = 0.0;
+        Double sumGTVH = 0.0;
+        List<Double> ddGTGD = new ArrayList<>();
+        for (int i = 0; i < historicalDailyDataList.size(); i++) {
+            countDay += 1;
+            sumGTVH += historicalDailyDataList.get(i).getMarket_cap();
+            date = historicalDailyDataList.get(i).getDate();
+            localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            int monthCurent = localDate.getMonthValue();
+            if (monthCurent != monthTemp) {
+                monthList.add(date);
+                monthTemp = monthCurent;
+                count += 1;
+                Collections.sort(ddGTGD);
+                int index = ddGTGD.size();
+                if (index % 2 == 0) {
+                    median = (ddGTGD.get(index / 2) + ddGTGD.get(index / 2 - 1)) / 2;
+                } else {
+                    median = ddGTGD.get((index - 1) / 2);
+                }
+                sum += median;
+                medianList.add(median);
+                ddGTGD = new ArrayList<>();
+                ddGTGD.add(historicalDailyDataList.get(i).getTrade_value());
+            } else {
+                ddGTGD.add(historicalDailyDataList.get(i).getTrade_value());
+            }
+        }
+        if (ddGTGD.size() != 0) {
+//            monthList.add(monthTemp);
+            int index = ddGTGD.size();
+            Collections.sort(ddGTGD);
+            if (index % 2 == 0) {
+                median = (ddGTGD.get(index / 2) + ddGTGD.get(index / 2 - 1)) / 2;
+            } else {
+                median = ddGTGD.get((index - 1) / 2);
+            }
+            count += 1;
+            sum += median;
+            medianList.add(median);
+            this.gtgd = sum / count;
+        }
+    }
+
     public Double getF() { return f; }
 
     public Double getGTVH() { return gtvh; }
@@ -216,6 +275,10 @@ public class Stock {
 
     public Double getGtvhCurrent() { return gtvhCurrent; }
 
+    public List<Double> getMedianList() { return medianList; }
+
+    public List<Date> getMonthList() { return monthList; }
+
     public void setCode(String code) { this.code = code; }
 
     public void setF(Double f) { this.f = f; }
@@ -237,4 +300,6 @@ public class Stock {
     public void setLenFromListedDate(Integer lenFromListedDate) { this.lenFromListedDate = lenFromListedDate; }
 
     public void setGtvhCurrent(Double gtvhCurrent) { this.gtvhCurrent = gtvhCurrent; }
+
+    public void setMedianList(List<Double> medianList) { this.medianList.addAll(medianList); }
 }
