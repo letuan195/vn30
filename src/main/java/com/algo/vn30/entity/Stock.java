@@ -22,6 +22,7 @@ public class Stock {
     private Double gtvh_f;
     private Double gtgd;
     private Double turnover;
+    private Double cumulativeGTGD;
     private Boolean hasWarning;
     private Boolean isPreVN30;
     private Integer lenFromListedDate;
@@ -33,6 +34,7 @@ public class Stock {
         this.code = code;
         this.isPreVN30 = isPreVN30;
         this.hasWarning = false;
+        this.cumulativeGTGD = 1.0;
         if (code.compareTo("HNG") == 0)
         {
             this.hasWarning = true;
@@ -120,6 +122,7 @@ public class Stock {
         this.code = code;
         this.isPreVN30 = isPreVN30;
         this.hasWarning = false;
+        this.cumulativeGTGD = 1.0;
         if (code.compareTo("HNG") == 0)
         {
             this.hasWarning = true;
@@ -200,6 +203,7 @@ public class Stock {
     public Stock(Long id, String code, List<DailyDataImpl> historicalDailyDataList) {
         this.id = id;
         this.code = code;
+        this.cumulativeGTGD = 1.0;
         medianList = new ArrayList<>();
         monthList = new ArrayList<>();
         Date date = historicalDailyDataList.get(0).getDate();
@@ -275,6 +279,8 @@ public class Stock {
 
     public Double getGtvhCurrent() { return gtvhCurrent; }
 
+    public Double getCumulativeGTGD() { return cumulativeGTGD; }
+
     public List<Double> getMedianList() { return medianList; }
 
     public List<Date> getMonthList() { return monthList; }
@@ -294,6 +300,8 @@ public class Stock {
     public void setHasWarning(Boolean hasWarning) { this.hasWarning = hasWarning; }
 
     public void setGTGD(Double gtgd) { this.gtgd = gtgd; }
+
+    public void setCumulativeGTGD(Double cumulativeGTGD) { this.cumulativeGTGD = cumulativeGTGD; }
 
     public void setIsPreVN30(Boolean isPreVN30) { this.isPreVN30 = isPreVN30; }
 

@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.stereotype.Service;
 
+import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -68,7 +72,6 @@ public class ReportDayImpl implements ReportDayService {
             }
         }
         for (int i = 0; i < securitiesList.size(); i++) {
-
             if (listPreVN30Code.contains(securitiesList.get(i).getName())) {
                 isPreVN30 = true;
             } else {
@@ -94,7 +97,7 @@ public class ReportDayImpl implements ReportDayService {
         Boolean write = false;
         resultsCSV.add(new String[]{"Series Number", "Name", "Market Cap Currnet", "Market Cap Avg", "Market Cap Adjusted", "FreeFloat", "Traded Value", "Turnover",
                 "PreVn30", "Status", "Real Move", "No. of Months from Listing for New Listed Share", "TOP 5 of Market Cap Current", "Median of Top 90% Market Cap Adjusted",
-                "Compare with Median of Top 90% Market Cap Adjusted", "Reason for rejection"});
+                "Compare with Median of Top 90% Market Cap Adjusted", "Cumulative Top 90% Traded Value", "Reason for rejection"});
         DecimalFormat f = new DecimalFormat("##.0000000");
 
         for (int i = 0; i < stockListHSX.size(); i++) {
@@ -107,7 +110,8 @@ public class ReportDayImpl implements ReportDayService {
                         "" + stockListHSX.get(i).getF(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGTGD()).toPlainString(),
                         "" + f.format(stockListHSX.get(i).getTurnover() / 100), getCodePre30(stockListHSX.get(i)), "VN30", getInOutVN30(stockListHSX.get(i), index),
                         getLenlistedDate(stockListHSX.get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), stockListHSX.get(i)),
-                        getMedianGTVH_f(vn30Result, stockListHSX.get(i).getCode()), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), " "});
+                        getMedianGTVH_f(vn30Result, stockListHSX.get(i).getCode()), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), getCumulativeGTGDTop90(vn30Result.getlStockVN30().get(index)), " "}) ;
+                continue;
             }
             if (index >= 30 && index < 35) {
                 resultsCSV.add(new String[]{"" + count, stockListHSX.get(i).getCode(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGtvhCurrent()).toPlainString(),
@@ -115,7 +119,9 @@ public class ReportDayImpl implements ReportDayService {
                         "" + stockListHSX.get(i).getF(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGTGD()).toPlainString(),
                         "" + f.format(stockListHSX.get(i).getTurnover() / 100), getCodePre30(stockListHSX.get(i)), "Substitute", getInOutVN30(stockListHSX.get(i), index),
                         getLenlistedDate(stockListHSX.get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), stockListHSX.get(i)),
-                        getMedianGTVH_f(vn30Result, stockListHSX.get(i).getCode()), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, stockListHSX.get(i))});
+                        getMedianGTVH_f(vn30Result, stockListHSX.get(i).getCode()), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), getCumulativeGTGDTop90(vn30Result.getlStockVN30().get(index)),
+                        getReasonDisqualifi(vn30Result, stockListHSX.get(i))});
+                continue;
             }
             if (index >= 35) {
                 resultsCSV.add(new String[]{"" + count, stockListHSX.get(i).getCode(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGtvhCurrent()).toPlainString(),
@@ -123,10 +129,11 @@ public class ReportDayImpl implements ReportDayService {
                         "" + stockListHSX.get(i).getF(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGTGD()).toPlainString(),
                         "" + f.format(stockListHSX.get(i).getTurnover() / 100), getCodePre30(stockListHSX.get(i)), " ", getInOutVN30(stockListHSX.get(i), index),
                         getLenlistedDate(stockListHSX.get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), stockListHSX.get(i)),
-                        getMedianGTVH_f(vn30Result, stockListHSX.get(i).getCode()), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, stockListHSX.get(i))});
+                        getMedianGTVH_f(vn30Result, stockListHSX.get(i).getCode()), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), getCumulativeGTGDTop90(vn30Result.getlStockVN30().get(index)),
+                        getReasonDisqualifi(vn30Result, stockListHSX.get(i))});
             }
         }
-        resultsCSV.add(new String[]{" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "});
+        resultsCSV.add(new String[]{" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "});
 //        resultsCSV.add(new String[]{"Stock REMOVE", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "});
         count = 0;
         for (int i = 0; i < vn30Result.getLsStockHOSE().size(); i++) {
@@ -137,13 +144,13 @@ public class ReportDayImpl implements ReportDayService {
                         "" + vn30Result.getLsStockHOSE().get(i).getF(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTGD()).toPlainString(),
                         "" + f.format(vn30Result.getLsStockHOSE().get(i).getTurnover() / 100), getCodePre30(vn30Result.getLsStockHOSE().get(i)), " ", "REMOVE",
                         getLenlistedDate(vn30Result.getLsStockHOSE().get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), vn30Result.getLsStockHOSE().get(i)),
-                        " ", getOperator(vn30Result.getLsStockHOSE().get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, vn30Result.getLsStockHOSE().get(i))});
+                        " ", getOperator(vn30Result.getLsStockHOSE().get(i), vn30Result.getMedianGTVH_f()), getCumulativeGTGDTop90(vn30Result.getLsStockHOSE().get(i)), getReasonDisqualifi(vn30Result, vn30Result.getLsStockHOSE().get(i))});
             }
         }
         for (int i = 0; i < vn30Result.getlStockVN30().size() + 5; i++) {
             if (!vn30Result.getlStockVN30().contains(vn30Result.getLsStockHOSE().get(i)) &&
-                    !vn30Result.getlStockVN30().contains(vn30Result.getLsStockHOSE().get(i)) && !vn30Result.getLsStockHOSE().get(i).getIsPreVN30() &&
-                    ((vn30Result.getLsStockHOSE().get(i).getTurnover() < 0.05 && vn30Result.getLsStockHOSE().get(i).getTurnover() > 0.04) ||
+                    !vn30Result.getlStockVN30().contains(vn30Result.getLsStockHOSE().get(i)) && !vn30Result.getLsStockHOSE().get(i).getIsPreVN30() && !vn30Result.getLsStockHOSE().get(i).getHasWarning() &&
+                    ((vn30Result.getLsStockHOSE().get(i).getTurnover() > 0.04 && vn30Result.getLsStockHOSE().get(i).getTurnover() < 0.05) || (vn30Result.getLsStockHOSE().get(i).getCumulativeGTGD() < 0.93) ||
                             (vn30Result.getLsStockHOSE().get(i).getF() < 0.1 && vn30Result.getLsStockHOSE().get(i).getGTVH_f() > 0.9 * vn30Result.getMedianGTVH_f()))) {
                 count++;
                 resultsCSV.add(new String[]{"" + count * -1, vn30Result.getLsStockHOSE().get(i).getCode(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGtvhCurrent()).toPlainString(),
@@ -151,7 +158,7 @@ public class ReportDayImpl implements ReportDayService {
                         "" + vn30Result.getLsStockHOSE().get(i).getF(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTGD()).toPlainString(),
                         "" + f.format(vn30Result.getLsStockHOSE().get(i).getTurnover() / 100), getCodePre30(vn30Result.getLsStockHOSE().get(i)), " ", " ",
                         getLenlistedDate(vn30Result.getLsStockHOSE().get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), vn30Result.getLsStockHOSE().get(i)),
-                        " ", getOperator(vn30Result.getLsStockHOSE().get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, vn30Result.getLsStockHOSE().get(i))});
+                        " ", getOperator(vn30Result.getLsStockHOSE().get(i), vn30Result.getMedianGTVH_f()), getCumulativeGTGDTop90(vn30Result.getLsStockHOSE().get(i)), getReasonDisqualifi(vn30Result, vn30Result.getLsStockHOSE().get(i))});
             }
         }
         CsvUtil.writeData(path, resultsCSV);
@@ -220,7 +227,7 @@ public class ReportDayImpl implements ReportDayService {
         Boolean write = false;
         resultsCSV.add(new String[]{"Series Number", "Name", "Market Cap Currnet", "Market Cap Avg", "Market Cap Adjusted", "FreeFloat", "Traded Value", "Turnover",
                 "PreVn30", "Status", "Real Move", "No. of Months from Listing for New Listed Share", "TOP 5 of Market Cap Current", "Median of Top 90% Market Cap Adjusted",
-                "Compare with Median of Top 90% Market Cap Adjusted", "Reason for rejection"});
+                "Compare with Median of Top 90% Market Cap Adjusted", "Cumulative Top 90% Traded Value", "Reason for rejection"});
         DecimalFormat f = new DecimalFormat("##.0000000");
 
         for (int i = 0; i < stockListHSX.size(); i++) {
@@ -233,7 +240,8 @@ public class ReportDayImpl implements ReportDayService {
                         "" + stockListHSX.get(i).getF(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGTGD()).toPlainString(),
                         "" + f.format(stockListHSX.get(i).getTurnover() / 100), getCodePre30(stockListHSX.get(i)), "VN30", getInOutVN30(stockListHSX.get(i), index),
                         getLenlistedDate(stockListHSX.get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), stockListHSX.get(i)),
-                        getMedianGTVH_f(vn30Result, stockListHSX.get(i).getCode()), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), " "});
+                        getMedianGTVH_f(vn30Result, stockListHSX.get(i).getCode()), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), getCumulativeGTGDTop90(vn30Result.getlStockVN30().get(index)), " "}) ;
+                continue;
             }
             if (index >= 30 && index < 35) {
                 resultsCSV.add(new String[]{"" + count, stockListHSX.get(i).getCode(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGtvhCurrent()).toPlainString(),
@@ -241,7 +249,9 @@ public class ReportDayImpl implements ReportDayService {
                         "" + stockListHSX.get(i).getF(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGTGD()).toPlainString(),
                         "" + f.format(stockListHSX.get(i).getTurnover() / 100), getCodePre30(stockListHSX.get(i)), "Substitute", getInOutVN30(stockListHSX.get(i), index),
                         getLenlistedDate(stockListHSX.get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), stockListHSX.get(i)),
-                        getMedianGTVH_f(vn30Result, stockListHSX.get(i).getCode()), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, stockListHSX.get(i))});
+                        getMedianGTVH_f(vn30Result, stockListHSX.get(i).getCode()), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), getCumulativeGTGDTop90(vn30Result.getlStockVN30().get(index)),
+                        getReasonDisqualifi(vn30Result, stockListHSX.get(i))});
+                continue;
             }
             if (index >= 35) {
                 resultsCSV.add(new String[]{"" + count, stockListHSX.get(i).getCode(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGtvhCurrent()).toPlainString(),
@@ -249,10 +259,11 @@ public class ReportDayImpl implements ReportDayService {
                         "" + stockListHSX.get(i).getF(), "" + BigDecimal.valueOf(stockListHSX.get(i).getGTGD()).toPlainString(),
                         "" + f.format(stockListHSX.get(i).getTurnover() / 100), getCodePre30(stockListHSX.get(i)), " ", getInOutVN30(stockListHSX.get(i), index),
                         getLenlistedDate(stockListHSX.get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), stockListHSX.get(i)),
-                        getMedianGTVH_f(vn30Result, stockListHSX.get(i).getCode()), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, stockListHSX.get(i))});
+                        getMedianGTVH_f(vn30Result, stockListHSX.get(i).getCode()), getOperator(stockListHSX.get(i), vn30Result.getMedianGTVH_f()), getCumulativeGTGDTop90(vn30Result.getlStockVN30().get(index)),
+                        getReasonDisqualifi(vn30Result, stockListHSX.get(i))});
             }
         }
-        resultsCSV.add(new String[]{" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "});
+        resultsCSV.add(new String[]{" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "});
 //        resultsCSV.add(new String[]{"Stock REMOVE", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "});
         count = 0;
         for (int i = 0; i < vn30Result.getLsStockHOSE().size(); i++) {
@@ -263,13 +274,13 @@ public class ReportDayImpl implements ReportDayService {
                         "" + vn30Result.getLsStockHOSE().get(i).getF(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTGD()).toPlainString(),
                         "" + f.format(vn30Result.getLsStockHOSE().get(i).getTurnover() / 100), getCodePre30(vn30Result.getLsStockHOSE().get(i)), " ", "REMOVE",
                         getLenlistedDate(vn30Result.getLsStockHOSE().get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), vn30Result.getLsStockHOSE().get(i)),
-                        " ", getOperator(vn30Result.getLsStockHOSE().get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, vn30Result.getLsStockHOSE().get(i))});
+                        " ", getOperator(vn30Result.getLsStockHOSE().get(i), vn30Result.getMedianGTVH_f()), getCumulativeGTGDTop90(vn30Result.getLsStockHOSE().get(i)), getReasonDisqualifi(vn30Result, vn30Result.getLsStockHOSE().get(i))});
             }
         }
         for (int i = 0; i < vn30Result.getlStockVN30().size() + 5; i++) {
             if (!vn30Result.getlStockVN30().contains(vn30Result.getLsStockHOSE().get(i)) &&
-                    !vn30Result.getlStockVN30().contains(vn30Result.getLsStockHOSE().get(i)) && !vn30Result.getLsStockHOSE().get(i).getIsPreVN30() &&
-                    ((vn30Result.getLsStockHOSE().get(i).getTurnover() < 0.05 && vn30Result.getLsStockHOSE().get(i).getTurnover() > 0.04) ||
+                    !vn30Result.getlStockVN30().contains(vn30Result.getLsStockHOSE().get(i)) && !vn30Result.getLsStockHOSE().get(i).getIsPreVN30() && !vn30Result.getLsStockHOSE().get(i).getHasWarning() &&
+                    ((vn30Result.getLsStockHOSE().get(i).getTurnover() > 0.04 && vn30Result.getLsStockHOSE().get(i).getTurnover() < 0.05) || (vn30Result.getLsStockHOSE().get(i).getCumulativeGTGD() < 0.93) ||
                             (vn30Result.getLsStockHOSE().get(i).getF() < 0.1 && vn30Result.getLsStockHOSE().get(i).getGTVH_f() > 0.9 * vn30Result.getMedianGTVH_f()))) {
                 count++;
                 resultsCSV.add(new String[]{"" + count * -1, vn30Result.getLsStockHOSE().get(i).getCode(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGtvhCurrent()).toPlainString(),
@@ -277,7 +288,7 @@ public class ReportDayImpl implements ReportDayService {
                         "" + vn30Result.getLsStockHOSE().get(i).getF(), "" + BigDecimal.valueOf(vn30Result.getLsStockHOSE().get(i).getGTGD()).toPlainString(),
                         "" + f.format(vn30Result.getLsStockHOSE().get(i).getTurnover() / 100), getCodePre30(vn30Result.getLsStockHOSE().get(i)), " ", " ",
                         getLenlistedDate(vn30Result.getLsStockHOSE().get(i).getLenFromListedDate()), getPositiontop5GTVHCurrent(vn30Result.getTop5GTVHCurrent(), vn30Result.getLsStockHOSE().get(i)),
-                        " ", getOperator(vn30Result.getLsStockHOSE().get(i), vn30Result.getMedianGTVH_f()), getReasonDisqualifi(vn30Result, vn30Result.getLsStockHOSE().get(i))});
+                        " ", getOperator(vn30Result.getLsStockHOSE().get(i), vn30Result.getMedianGTVH_f()), getCumulativeGTGDTop90(vn30Result.getLsStockHOSE().get(i)), getReasonDisqualifi(vn30Result, vn30Result.getLsStockHOSE().get(i))});
             }
         }
         CsvUtil.writeData(path, resultsCSV);
@@ -324,6 +335,13 @@ public class ReportDayImpl implements ReportDayService {
         return " ";
     }
 
+    private String getCumulativeGTGDTop90(Stock stock) {
+        if (stock.getCumulativeGTGD() >= 0.9 && stock.getCumulativeGTGD() < 0.93) {
+            return BigDecimal.valueOf(stock.getCumulativeGTGD()).toPlainString();
+        }
+        return " ";
+    }
+
     private String getReasonDisqualifi(VN30Result vn30Result, Stock stock) {
         List<String> lStrOutput = new ArrayList<>();
         String strOutput = "";
@@ -343,5 +361,48 @@ public class ReportDayImpl implements ReportDayService {
 //        for (int i = 0; i < lStrOutput.size(); i++) strOutput += lStrOutput.get(i) + "; ";
 
         return strOutput;
+    }
+
+    public void getMedian(List<String> stringList) {
+        List<SecurityImpl> securitiesList = securityPersistence.findByExchange("HSX");
+        List<Stock> stockListHSX = new ArrayList<>();
+
+        Date dateStart = null;
+        Date dateEnd = null;
+
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            dateStart = format.parse("2018-12-31");
+            dateEnd = format.parse("2020-02-14");
+        } catch (Exception e) {
+
+        }
+        for (int i = 0; i < securitiesList.size(); i++) {
+            if (!stringList.contains(securitiesList.get(i).getName())) continue;
+            List<DailyDataImpl> historicalDailyDataList = dailyDataPersistence.findBySecIdAndDateAfter(securitiesList.get(i).getId(), dateStart, dateEnd);
+            Stock newStock = new Stock(securitiesList.get(i).getId(), securitiesList.get(i).getName(), historicalDailyDataList);
+            stockListHSX.add(newStock);
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream("D:/Result/median.csv");
+            DataOutputStream dos = new DataOutputStream(fos);
+            dos.writeChars("Time");
+            for (int i = 0; i < stockListHSX.size(); i++) {
+                dos.writeChars(";" + stockListHSX.get(i).getCode());
+            }
+            dos.writeChars("\n");
+            for (int j = 0; j < stockListHSX.get(0).getMonthList().size(); j++) {
+                dos.writeChars(stockListHSX.get(0).getMonthList().get(j).toString());
+                for (int i = 0; i < stockListHSX.size(); i++) {
+                    dos.writeChars(";" + stockListHSX.get(i).getMedianList().get(j).toString());
+                }
+                dos.writeChars("\n");
+            }
+            dos.close();
+            fos.close();
+        } catch (Exception e) {
+
+        }
+
     }
 }

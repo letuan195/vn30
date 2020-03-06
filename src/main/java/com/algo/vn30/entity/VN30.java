@@ -92,6 +92,7 @@ public class VN30 {
         Double sumGTGD = 0.0;
         Double sumCumulativeGTGD = 0.0;
         Double threshHold = 0.9;
+        Boolean add = true;
 
         for (int i = 0; i < lsStocksVNAllShare.size(); i++) {
             sumGTGD += lsStocksVNAllShare.get(i).getGTGD();
@@ -99,11 +100,14 @@ public class VN30 {
 
         for (int i = 0; i < lsStocksVNAllShare.size(); i++) {
             sumCumulativeGTGD += lsStocksVNAllShare.get(i).getGTGD();
-            lsStockCumulative.add(lsStocksVNAllShare.get(i));
+            lsStocksVNAllShare.get(i).setCumulativeGTGD(sumCumulativeGTGD / sumGTGD);
+            if (add) {
+                lsStockCumulative.add(lsStocksVNAllShare.get(i));
+            }
 //            System.out.println(lsStocksVNAllShare.get(i).getCode());
             if (sumCumulativeGTGD / sumGTGD >= threshHold) {
                 if (lsStockCumulative.size() < 50) { threshHold += 0.01; }
-                else { break; }
+                else { add = false; }
             }
         }
         sortListStockByGTVH(lsStockCumulative);
