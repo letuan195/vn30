@@ -25,7 +25,7 @@
         <spring.data.version>2.1.8.RELEASE</spring.data.version>
         <hikari.version>3.2.0</hikari.version>
         <eejsr.version>1.0</eejsr.version>
-        <jackson.version>2.9.9</jackson.version>
+        <jackson.version>2.12.1</jackson.version>
         <json.version>20180813</json.version>
     </properties>
 
